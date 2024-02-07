@@ -31,8 +31,3 @@ yarn.lock
 /test-results/
 /playwright-report/
 /playwright/.cache/
-
-#database
-todo.db
-todo.db-shm
-todo.db-wal

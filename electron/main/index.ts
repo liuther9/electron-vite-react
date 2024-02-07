@@ -7,7 +7,10 @@ import { update } from './update'
 // DATABASE
 import Database from 'better-sqlite3';
 
-const db = new Database('todo.db', { verbose: console.log });
+const userDataPath = app.getPath('userData');
+const dbFilePath = join(userDataPath, 'todo.db');
+
+const db = new Database(dbFilePath, { verbose: console.log });
 db.pragma('journal_mode = WAL');
 
 const initDB = () => {
