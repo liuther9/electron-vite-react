@@ -31,10 +31,10 @@ const TodoList: React.FC = () => {
   return (
 		<div className={s.container}>
 			
-			<form onSubmit={handleSubmit}>
-      <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
-      <button type="submit">Add Todo</button>
-    </form>
+			<form className={s.form} onSubmit={handleSubmit}>
+				<input className={s.input} type="text" value={text} onChange={(e) => setText(e.target.value)} />
+				<button type="submit">Add Todo</button>
+			</form>
       {todos.map(todo => (
         <TodoItem
           key={todo.id}

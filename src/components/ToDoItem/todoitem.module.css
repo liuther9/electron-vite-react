@@ -3,6 +3,7 @@
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
+	margin-bottom: 5px;
 }
 
 .controls {
@@ -12,4 +13,5 @@
 
 .controls > button {
 	font-size: x-small;
+	margin-left: 5px;
 }
