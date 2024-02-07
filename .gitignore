@@ -34,3 +34,5 @@ yarn.lock
 
 #database
 todo.db
+todo.db-shm
+todo.db-wal
