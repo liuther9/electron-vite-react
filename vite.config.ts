@@ -72,5 +72,10 @@ export default defineConfig(({ command }) => {
       }
     })(),
     clearScreen: false,
+    build: {
+      rollupOptions: {
+        external: ['electron']
+      }
+    },
   }
 })

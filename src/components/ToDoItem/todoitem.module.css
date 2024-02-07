@@ -1,0 +1,15 @@
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.controls {
+	display: flex;
+	align-items: center;
+}
+
+.controls > button {
+	font-size: x-small;
+}

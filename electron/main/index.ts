@@ -4,6 +4,58 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { update } from './update'
 
+// DATABASE
+import Database from 'better-sqlite3';
+
+const db = new Database('todo.db', { verbose: console.log });
+db.pragma('journal_mode = WAL');
+
+const initDB = () => {
+  db.prepare(`CREATE TABLE IF NOT EXISTS todos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    text TEXT,
+    status TEXT
+  )`).run();
+  const tableExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='todos'").get();
+    if (tableExists) {
+      console.log('tableExists');
+    } else {
+      console.error('Todo table does not exist.');
+    }
+};
+
+const addTodo = (text: string, status: 'Done' | 'In Progress') => {
+  const stmt = db.prepare('INSERT INTO todos (text, status) VALUES (?, ?)');
+  const info = stmt.run(text, status);
+  return info.lastInsertRowid;
+};
+
+const getTodos = () => {
+  return db.prepare('SELECT * FROM todos').all();
+};
+
+const updateTodo = (id: number, text: string, status: 'Done' | 'In Progress') => {
+  db.prepare('UPDATE todos SET text = ?, status = ? WHERE id = ?').run(text, status, id);
+};
+
+interface Todo {
+  id: number;
+  text: string;
+  status: 'Done' | 'In Progress';
+}
+
+const toggleTodoStatus = (id: number) => {
+  const todo = db.prepare('SELECT status FROM todos WHERE id = ?').get(id) as Todo;
+  const newStatus = todo.status === 'Done' ? 'In Progress' : 'Done';
+  db.prepare('UPDATE todos SET status = ? WHERE id = ?').run(newStatus, id);
+};
+
+const deleteTodo = (id: number) => {
+  db.prepare('DELETE FROM todos WHERE id = ?').run(id);
+};
+
+// DATABASE
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
@@ -83,7 +135,30 @@ async function createWindow() {
   update(win)
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow();
+  initDB();
+
+  ipcMain.handle('add-todo', async (event, {text, status}) => {
+    const id = addTodo(text, status);
+    return id;
+  });
+
+  ipcMain.handle('get-todos', async (event) => {
+    const todos = getTodos();
+    return todos;
+  });
+
+  ipcMain.handle('update-todo', async (event, {id, text, status}) => {
+    updateTodo(id, text, status);
+    return;
+  });
+
+  ipcMain.handle('delete-todo', async (event, {id}) => {
+    deleteTodo(id);
+    return;
+  });
+})
 
 app.on('window-all-closed', () => {
   win = null

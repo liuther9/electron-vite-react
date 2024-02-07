@@ -21,6 +21,37 @@ function withPrototype(obj: Record<string, any>) {
   }
   return obj
 }
+// preload.js
+
+contextBridge.exposeInMainWorld(
+  'electron',
+  {
+    send: (channel: string, data: any) => {
+      // whitelist channels
+      let validChannels = ['add-todo', 'get-todos', 'update-todo', 'delete-todo', 'toggle-todo-status'];
+      if (validChannels.includes(channel)) {
+        ipcRenderer.send(channel, data);
+      }
+    },
+    invoke: (channel: string, data: any) => {
+      console.log(channel)
+      let validChannels = ['add-todo', 'get-todos', 'update-todo', 'delete-todo', 'toggle-todo-status'];
+      if (validChannels.includes(channel)) {
+        return ipcRenderer.invoke(channel, data);
+      }
+    },
+    on: (channel: string, func: any) => {
+      let validChannels = ['todo-added', 'todos-fetched', 'todo-updated', 'todo-deleted', 'todo-status-toggled'];
+      if (validChannels.includes(channel)) {
+        ipcRenderer.on(channel, (event, ...args) => func(...args));
+      }
+    },
+    removeAllListeners: (channel: string) => {
+      ipcRenderer.removeAllListeners(channel);
+    }
+  }
+);
+
 
 // --------- Preload scripts loading ---------
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
