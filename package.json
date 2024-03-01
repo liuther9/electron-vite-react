@@ -31,7 +31,7 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.4",
     "autoprefixer": "^10.4.16",
-    "electron": "^28.1.0",
+    "electron": "^29.1.0",
     "electron-builder": "^24.6.3",
     "electron-rebuild": "^3.2.9",
     "postcss": "^8.4.31",
